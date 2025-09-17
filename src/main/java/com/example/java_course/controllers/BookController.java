@@ -20,13 +20,17 @@ import com.example.java_course.models.Book;
 import com.example.java_course.models.Genre;
 import com.example.java_course.models.dto.BookDto;
 import com.example.java_course.models.dto.ParamsDto;
+import com.example.java_course.models.dto.RatingDto;
+import com.example.java_course.models.dto.RegisterDto;
 import com.example.java_course.services.BookService;
 import com.example.java_course.services.GenreService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/books")
 @Validated
-public class BookController  {
+public class BookController {
     private final BookService bookService;
     private final GenreService genreService;
 
@@ -38,25 +42,40 @@ public class BookController  {
     @GetMapping("params")
     public ParamsDto getParams(@RequestParam(required = false, defaultValue = "Validating...") String message) {
         ParamsDto params = new ParamsDto();
-        params.setMessage(message!=null? message:"hello world");
+        params.setMessage(message != null ? message : "hello world");
         return params;
     }
 
-    @GetMapping
-    public ResponseEntity<List<BookDto>> getAllBooks(){
-        List<BookDto> books = bookService.getAllBooks().stream()
-            .map(this::toDto)
-            .collect(Collectors.toList());
-        return ResponseEntity.ok(books);
+    @GetMapping("register")
+    public RegisterDto getUserRegister(RegisterDto register) {
+        return register;
     }
 
+    @GetMapping("rating")
+    public RatingDto getRating(HttpServletRequest request) {
+        Integer rating = 0;
+        try {
+            rating = Integer.parseInt(request.getParameter("rating"));
+        } catch (NumberFormatException e) {}
+        RatingDto ratingDto = new RatingDto();
+        ratingDto.setRatingBook(rating);
+        return ratingDto;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<BookDto>> getAllBooks() {
+        List<BookDto> books = bookService.getAllBooks().stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(books);
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<BookDto> getBookById(@PathVariable Long id) {
         return bookService.getBookById(id)
-            .map(this::toDto)
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build());
+                .map(this::toDto)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
@@ -83,13 +102,12 @@ public class BookController  {
     private BookDto toDto(Book book) {
         // Assuming BookDto has a constructor or builder that accepts Book fields
         return new BookDto(
-            book.getIdBook(),
-            book.getTitle(),
-            book.getAuthor(),
-            book.getPublishedDate() != null ? book.getPublishedDate().toString() : null,
-            book.getGenre() != null ? book.getGenre().getNameGenre() : null,
-            book.getGenre() != null ? book.getGenre().getIdGenre() : null
-        );
+                book.getIdBook(),
+                book.getTitle(),
+                book.getAuthor(),
+                book.getPublishedDate() != null ? book.getPublishedDate().toString() : null,
+                book.getGenre() != null ? book.getGenre().getNameGenre() : null,
+                book.getGenre() != null ? book.getGenre().getIdGenre() : null);
     }
 
     // Add this method to convert BookDto to Book
@@ -99,11 +117,13 @@ public class BookController  {
         book.setIdBook(bookDto.getIdBook());
         book.setTitle(bookDto.getTitle());
         book.setAuthor(bookDto.getAuthor());
-        book.setPublishedDate(bookDto.getPublishedDate() != null ? java.sql.Date.valueOf(LocalDate.parse(bookDto.getPublishedDate())) : null);
+        book.setPublishedDate(
+                bookDto.getPublishedDate() != null ? java.sql.Date.valueOf(LocalDate.parse(bookDto.getPublishedDate()))
+                        : null);
 
-        //Buscar el genero por id y asignarlo al libro
+        // Buscar el genero por id y asignarlo al libro
         Genre genre = genreService.getGenreById(bookDto.getGenreId())
-        .orElseThrow(() -> new RuntimeException("Genre not found"));
+                .orElseThrow(() -> new RuntimeException("Genre not found"));
         book.setGenre(genre);
 
         return book;
