@@ -1,0 +1,68 @@
+@JavaCourse_HostAddress=http://localhost:8080
+@JavaCourse_ApiPath=/api
+@JavaCourse_BaseUrl={{JavaCourse_HostAddress}}{{JavaCourse_ApiPath}}
+
+GET {{JavaCourse_BaseUrl}}/books
+Accept: application/json
+
+###
+GET {{JavaCourse_BaseUrl}}/genres
+Accept: application/json
+
+###
+
+POST {{JavaCourse_BaseUrl}}/books
+Content-Type: application/json
+Accept: application/json
+
+{
+  "title": "La psicología del dinero",
+  "author": "Morgan Housel",
+  "publishedDate": "2021-09-01",
+  "genreId": 4
+}
+
+###
+PUT {{JavaCourse_BaseUrl}}/books/1
+Content-Type: application/json
+Accept: application/json
+
+{
+    "title": "La magia de pensar en grande",
+    "author": "David J. Schwartz",
+    "publishedDate": "1959-01-01",
+    "genreId": 4
+}
+
+###
+DELETE {{JavaCourse_BaseUrl}}/books/1
+Accept: application/json
+
+###
+
+GET {{JavaCourse_BaseUrl}}/books/1
+Accept: application/json
+
+###
+POST {{JavaCourse_BaseUrl}}/genres
+Accept: application/json
+Content-Type: application/json
+
+{
+    "nameGenre": "Motivational",
+    "description": "Books that inspire and encourage personal growth and success.",
+    "isChildFriendly": true
+}
+
+###
+
+PUT {{JavaCourse_BaseUrl}}/genres/1
+Accept: application/json
+Content-Type: application/json
+
+{
+    "nameGenre": "Fiction",
+    "description": "A genre that includes imaginative or invented stories.",
+    "isChildFriendly": true,
+    "books": [1, 2]
+}

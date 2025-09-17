@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Details</title>
+</head>
+<body>
+    <h2>Learning spring boot</h2>
+    <div>
+    <!-- <div th:text="${books} ?: 'not available books'"> -->
+        <ul>
+            <li th:each="b : ${books}" th:text="${b.title + ' - ' + b.author + ' - ' + b.publishedDate + ' - ' + b.genreName}">book title</li>
+            <!-- <li th:each="b : ${books}" th:text="${b.author}">book author</li>
+            <li th:each="b : ${books}" th:text="${b.publishedDate}">book publishedDate</li>
+            <li th:each="b : ${books}" th:text="${b.genreName}">book genreName</li> -->
+        </ul>
+    </div>
+</body>
+</html>
