@@ -19,8 +19,10 @@ import com.example.java_course.models.Genre;
 import com.example.java_course.models.dto.GenreDto;
 import com.example.java_course.services.GenreService;
 
+
 @RestController
-@RequestMapping("/api/genres")
+@RequestMapping("genres")
+// @RequestMapping("/api/genres")
 @Validated
 public class GenreController {
 
@@ -114,4 +116,14 @@ public class GenreController {
 
     // return response;
     // }
+
+    @GetMapping("description/{param}")
+    public String getDescription(@PathVariable String param) {
+        if (param.isEmpty()) {
+            param = param.concat("arro");
+            return param;
+        }
+        return "param not found";
+    }
+
 }

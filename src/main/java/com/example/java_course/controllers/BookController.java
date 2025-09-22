@@ -30,7 +30,8 @@ import com.example.java_course.services.GenreService;
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("/api/books")
+@RequestMapping("books")
+// @RequestMapping("/api/books")
 @Validated
 public class BookController {
     private final BookService bookService;
