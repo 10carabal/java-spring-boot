@@ -20,6 +20,10 @@ public class BookService {
         return bookRepository.findAll();
     }
 
+    public List<Book> getAllBooksByRating(int rating) {
+        return bookRepository.findAllByRating(rating);
+    }
+
     public Optional<Book> getBookById(Long id) {
         return bookRepository.findById(id);
     }

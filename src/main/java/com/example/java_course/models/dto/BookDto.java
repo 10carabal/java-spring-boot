@@ -19,6 +19,8 @@ public class BookDto {
     @NotNull(message = "Author cannot be null")
     private String author;
     private String publishedDate;
+    private String createTime;
+    private Integer rating;
     private String genreName;
     private Long genreId;
 }

@@ -1,6 +1,8 @@
 package com.example.java_course.controllers;
 
+import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,7 +24,6 @@ import com.example.java_course.models.Book;
 import com.example.java_course.models.Genre;
 import com.example.java_course.models.dto.BookDto;
 import com.example.java_course.models.dto.ParamsDto;
-import com.example.java_course.models.dto.RatingDto;
 import com.example.java_course.models.dto.RegisterDto;
 import com.example.java_course.services.BookService;
 import com.example.java_course.services.GenreService;
@@ -54,18 +55,18 @@ public class BookController {
         return register;
     }
 
-    @GetMapping("rating")
-    public RatingDto getRating(HttpServletRequest request) {
-        Integer rating;
-        try {
-            rating = Integer.parseInt(request.getParameter("rating"));
-        } catch (NumberFormatException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid rating value");
-        }
-        RatingDto ratingDto = new RatingDto();
-        ratingDto.setRatingBook(rating);
-        return ratingDto;
-    }
+//    @GetMapping("rating")
+//    public RatingDto getRating(HttpServletRequest request) {
+//        Integer rating;
+//        try {
+//            rating = Integer.parseInt(request.getParameter("rating"));
+//        } catch (NumberFormatException e) {
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid rating value");
+//        }
+//        RatingDto ratingDto = new RatingDto();
+//        ratingDto.setRatingBook(rating);
+//        return ratingDto;
+//    }
 
     @GetMapping
     public ResponseEntity<List<BookDto>> getAllBooks() {
@@ -111,26 +112,55 @@ public class BookController {
                 book.getTitle(),
                 book.getAuthor(),
                 book.getPublishedDate() != null ? book.getPublishedDate().toString() : null,
+                book.getCreateTime() != null ? book.getCreateTime().toString() : null,
+                book.getRating(),
                 book.getGenre() != null ? book.getGenre().getNameGenre() : null,
                 book.getGenre() != null ? book.getGenre().getIdGenre() : null);
     }
 
     // Add this method to convert BookDto to Book
     private Book toEntity(BookDto bookDto) {
+        // Get the current LocalDateTime
+        LocalDateTime currentDateTime = LocalDateTime.now();
+
         var book = new Book();
         // Assuming Book has a constructor or builder that accepts BookDto fields
         book.setIdBook(bookDto.getIdBook());
         book.setTitle(bookDto.getTitle());
         book.setAuthor(bookDto.getAuthor());
         book.setPublishedDate(
-                bookDto.getPublishedDate() != null ? java.sql.Date.valueOf(LocalDate.parse(bookDto.getPublishedDate()))
+                bookDto.getPublishedDate() != null ? Date.valueOf(LocalDate.parse(bookDto.getPublishedDate()))
                         : null);
+        book.setCreateTime(currentDateTime);
+        book.setRating(bookDto.getRating());
 
         // Buscar el genero por id y asignarlo al libro
         Genre genre = genreService.getGenreById(bookDto.getGenreId())
                 .orElseThrow(() -> new RuntimeException("Genre not found"));
         book.setGenre(genre);
+        book.setRating(bookDto.getRating());
 
         return book;
+    }
+
+    @GetMapping("/_rating/{rating}")
+    public ResponseEntity<List<BookDto>> getBooksByGenre(@PathVariable("rating") int rating) {
+        try {
+            rating = Integer.parseInt(String.valueOf(rating));
+            if (rating > 0){
+                List<BookDto> books = bookService.getAllBooksByRating(rating).stream()
+                        .map(this::toDto)
+                        .collect(Collectors.toList());
+                return ResponseEntity.ok(books);
+            } else  {
+                List<BookDto> books = bookService.getAllBooks().stream()
+                        .map(this::toDto)
+                        .collect(Collectors.toList());
+                return ResponseEntity.ok(books);
+            }
+        } catch (NumberFormatException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid rating value");
+        }
+
     }
 }

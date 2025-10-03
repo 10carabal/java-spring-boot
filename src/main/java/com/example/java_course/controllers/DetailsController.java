@@ -36,6 +36,8 @@ public class DetailsController {
             book.getTitle(),
             book.getAuthor(),
             book.getPublishedDate() != null ? book.getPublishedDate().toString() : null,
+            book.getCreateTime() != null ? book.getCreateTime().toString() : null,
+            book.getRating(),
             book.getGenre() != null ? book.getGenre().getNameGenre() : null,
             book.getGenre() != null ? book.getGenre().getIdGenre() : null
         );

@@ -36,6 +36,8 @@ public class Book {
     private Date publishedDate;
     @Column(name = "create_time")
     private LocalDateTime createTime;
+    @Column(name = "rating")
+    private int rating;
     @ManyToOne
     @JoinColumn(name = "genre_id")
     private Genre genre;
