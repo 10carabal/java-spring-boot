@@ -117,13 +117,4 @@ public class GenreController {
     // return response;
     // }
 
-    @GetMapping("description/{param}")
-    public String getDescription(@PathVariable String param) {
-        if (param.isEmpty()) {
-            param = param.concat("arro");
-            return param;
-        }
-        return "param not found";
-    }
-
 }
