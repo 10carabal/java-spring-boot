@@ -28,8 +28,6 @@ import com.example.java_course.models.dto.RegisterDto;
 import com.example.java_course.services.BookService;
 import com.example.java_course.services.GenreService;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 @RestController
 @RequestMapping("books")
 // @RequestMapping("/api/books")
@@ -55,26 +53,47 @@ public class BookController {
         return register;
     }
 
-//    @GetMapping("rating")
-//    public RatingDto getRating(HttpServletRequest request) {
-//        Integer rating;
-//        try {
-//            rating = Integer.parseInt(request.getParameter("rating"));
-//        } catch (NumberFormatException e) {
-//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid rating value");
-//        }
-//        RatingDto ratingDto = new RatingDto();
-//        ratingDto.setRatingBook(rating);
-//        return ratingDto;
-//    }
-
     @GetMapping
-    public ResponseEntity<List<BookDto>> getAllBooks() {
-        List<BookDto> books = bookService.getAllBooks().stream()
-                .map(this::toDto)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(books);
+    public ResponseEntity<List<BookDto>> getAllBooks(@RequestParam(required = false) Integer rating) {
+        try {
+            if (rating != null && rating > 0) {
+                List<BookDto> books = bookService.getAllBooksByRating(rating).stream()
+                        .map(this::toDto)
+                        .collect(Collectors.toList());
+                return ResponseEntity.ok(books);
+            } else {
+                List<BookDto> books = bookService.getAllBooks().stream()
+                        .map(this::toDto)
+                        .collect(Collectors.toList());
+                return ResponseEntity.ok(books);
+            }
+        } catch (NumberFormatException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid rating value");
+        }
+
     }
+
+    // @GetMapping("rating")
+    // public RatingDto getRating(HttpServletRequest request) {
+    // Integer rating;
+    // try {
+    // rating = Integer.parseInt(request.getParameter("rating"));
+    // } catch (NumberFormatException e) {
+    // throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid rating
+    // value");
+    // }
+    // RatingDto ratingDto = new RatingDto();
+    // ratingDto.setRatingBook(rating);
+    // return ratingDto;
+    // }
+
+    // @GetMapping
+    // public ResponseEntity<List<BookDto>> getAllBooks() {
+    //     List<BookDto> books = bookService.getAllBooks().stream()
+    //             .map(this::toDto)
+    //             .collect(Collectors.toList());
+    //     return ResponseEntity.ok(books);
+    // }
 
     @GetMapping("/{id}")
     public ResponseEntity<BookDto> getBookById(@PathVariable Long id) {
@@ -143,24 +162,4 @@ public class BookController {
         return book;
     }
 
-    @GetMapping("/_rating/{rating}")
-    public ResponseEntity<List<BookDto>> getBooksByGenre(@PathVariable("rating") int rating) {
-        try {
-            rating = Integer.parseInt(String.valueOf(rating));
-            if (rating > 0){
-                List<BookDto> books = bookService.getAllBooksByRating(rating).stream()
-                        .map(this::toDto)
-                        .collect(Collectors.toList());
-                return ResponseEntity.ok(books);
-            } else  {
-                List<BookDto> books = bookService.getAllBooks().stream()
-                        .map(this::toDto)
-                        .collect(Collectors.toList());
-                return ResponseEntity.ok(books);
-            }
-        } catch (NumberFormatException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid rating value");
-        }
-
-    }
 }
