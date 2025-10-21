@@ -1,5 +1,6 @@
-@JavaCourse_HostAddress=http://localhost:8080
-@JavaCourse_ApiPath=/api
+@JavaCourse_HostAddress=http://127.0.0.1:8080
+# @JavaCourse_HostAddress=http://localhost:8080
+@JavaCourse_ApiPath=
 @JavaCourse_BaseUrl={{JavaCourse_HostAddress}}{{JavaCourse_ApiPath}}
 
 GET {{JavaCourse_BaseUrl}}/books
@@ -40,7 +41,13 @@ Accept: application/json
 
 ###
 
-GET {{JavaCourse_BaseUrl}}/books/1
+GET {{JavaCourse_BaseUrl}}/books/8
+Accept: application/json
+
+###
+
+
+GET {{JavaCourse_BaseUrl}}/books?rating=5
 Accept: application/json
 
 ###
