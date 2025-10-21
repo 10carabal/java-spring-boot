@@ -1,6 +1,6 @@
 @JavaCourse_HostAddress=http://127.0.0.1:8080
 # @JavaCourse_HostAddress=http://localhost:8080
-@JavaCourse_ApiPath=
+@JavaCourse_ApiPath=/api
 @JavaCourse_BaseUrl={{JavaCourse_HostAddress}}{{JavaCourse_ApiPath}}
 
 GET {{JavaCourse_BaseUrl}}/books
